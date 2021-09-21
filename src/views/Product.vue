@@ -56,18 +56,28 @@
                     <h3>{{ detailPage.name }}</h3>
                   </div>
                   <div class="pd-desc">
-                    <p>
-                      {{ detailPage.description }}
-                    </p>
-
+                    <!-- terdapat tag p yang tidak bisa hilang, makanya menggunakan v-html -->
+                    <p v-html="detailPage.description"></p>
                     <h4>${{ detailPage.price }}</h4>
                   </div>
                   <div class="quantity">
-                    <router-link to="./cart">
-                      <div class="primary-btn pd-cart">
-                        Add To Cart
-                      </div></router-link
+                    <!-- <router-link to="./cart"> -->
+                    <a
+                      href="#"
+                      @click="
+                        addAndSaveCart(
+                          detailPage.id,
+                          detailPage.name,
+                          detailPage.price,
+                          detailPage.galleries[0].photo
+                        )
+                      "
+                      class="primary-btn pd-cart"
                     >
+                      Add To Cart
+                    </a>
+
+                    <!-- </router-link> -->
                   </div>
                 </div>
               </div>
@@ -102,13 +112,14 @@ export default {
   data() {
     return {
       img_default: "",
-      thumbs: [
-        "img/mickey1.jpg",
-        "img/mickey2.jpg",
-        "img/mickey3.jpg",
-        "img/mickey4.jpg",
-      ],
+      // thumbs: [
+      //   "img/mickey1.jpg",
+      //   "img/mickey2.jpg",
+      //   "img/mickey3.jpg",
+      //   "img/mickey4.jpg",
+      // ],
       detailPage: [],
+      keranjangUser: [],
     };
   },
   methods: {
@@ -119,8 +130,30 @@ export default {
       this.detailPage = data;
       this.img_default = data.galleries[0].photo;
     },
+
+    addAndSaveCart(idProduct, nameProduct, priceProduct, photoProduct) {
+      var productStored = {
+        id: idProduct,
+        name: nameProduct,
+        price: priceProduct,
+        photo: photoProduct,
+      };
+      //add
+      this.keranjangUser.push(productStored);
+      //save
+      const parsed = JSON.stringify(this.keranjangUser);
+      localStorage.setItem("keranjangUser", parsed);
+    },
   },
   mounted() {
+    if (localStorage.getItem("keranjangUser")) {
+      try {
+        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
+      } catch (e) {
+        localStorage.removeItem("keranjangUser");
+      }
+    }
+
     axios
       .get("http://shayna-backend.belajarkoding.com/api/products", {
         params: { id: this.$route.params.id },
