@@ -19,7 +19,17 @@
               <div class="pi-pic">
                 <img :src="itemProduct.galleries[0].photo" alt="" />
                 <ul>
-                  <li class="w-icon active">
+                  <li
+                    class="w-icon active"
+                    @click="
+                      addAndSaveCart(
+                        itemProduct.id,
+                        itemProduct.name,
+                        itemProduct.price,
+                        itemProduct.galleries[0].photo
+                      )
+                    "
+                  >
                     <a href="#"><i class="icon_bag_alt"></i></a>
                   </li>
                   <li class="quick-view">
@@ -61,7 +71,23 @@ export default {
   data() {
     return {
       products: [],
+      keranjangUser: [],
     };
+  },
+  methods: {
+    addAndSaveCart(idProduct, nameProduct, priceProduct, photoProduct) {
+      var productStored = {
+        id: idProduct,
+        name: nameProduct,
+        price: priceProduct,
+        photo: photoProduct,
+      };
+      //add
+      this.keranjangUser.push(productStored);
+      //save
+      const parsed = JSON.stringify(this.keranjangUser);
+      localStorage.setItem("keranjangUser", parsed);
+    },
   },
   mounted() {
     axios

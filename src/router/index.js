@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Product from '../views/Product.vue'
+import Cart from '../views/ShoppingCart.vue'
+import Succes from '../views/Succes.vue'
 
 Vue.use(VueRouter)
 
@@ -22,17 +25,17 @@ const routes = [
     path: '/product/:id',
     name: 'Product',
     props: true,
-    component: () => import(/* webpackChunkName: "about" */ '../views/Product.vue')
+    component: Product
   },
   {
     path: '/cart',
     name: 'Cart',
-    component: () => import(/* webpackChunkName: "about" */ '../views/ShoppingCart.vue')
+    component: Cart
   },
   {
     path: '/succes',
     name: 'Succes',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Succes.vue')
+    component: Succes
   },
 ]
 

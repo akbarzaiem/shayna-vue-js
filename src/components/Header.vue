@@ -54,11 +54,14 @@
                             </div>
                           </td>
                           <td class="si-close">
-                            <i class="ti-close"></i>
+                            <i
+                              @click="removeItem(keranjangUser.index)"
+                              class="ti-close"
+                            ></i>
                           </td>
                         </tr>
                       </tbody>
-                      <tbody>
+                      <tbody v-else>
                         <tr>
                           <td>Keranjang Kosong</td>
                         </tr>
@@ -67,10 +70,10 @@
                   </div>
                   <div class="select-total">
                     <span>total:</span>
-                    <h5>$120.00</h5>
+                    <h5>${{ totalPrice }}.00</h5>
                   </div>
                   <div class="select-button">
-                    <a href="#" class="primary-btn view-card">VIEW CARD</a>
+                    <a href="/cart" class="primary-btn view-card">VIEW CARD</a>
                     <a href="#" class="primary-btn checkout-btn">CHECK OUT</a>
                   </div>
                 </div>
@@ -92,6 +95,15 @@ export default {
       keranjangUser: [],
     };
   },
+  methods: {
+    removeItem(index) {
+      //hapus
+      this.keranjangUser.splice(index);
+      //save
+      const parsed = JSON.stringify(this.keranjangUser);
+      localStorage.setItem("keranjangUser", parsed);
+    },
+  },
   mounted() {
     if (localStorage.getItem("keranjangUser")) {
       try {
@@ -100,6 +112,13 @@ export default {
         localStorage.removeItem("keranjangUser");
       }
     }
+  },
+  computed: {
+    totalPrice() {
+      return this.keranjangUser.reduce(function (item, data) {
+        return item + data.price;
+      }, 0);
+    },
   },
 };
 </script>

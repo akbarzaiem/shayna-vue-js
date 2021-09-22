@@ -34,27 +34,23 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr
+                        v-for="keranjang in keranjangUser"
+                        :key="keranjang.id"
+                      >
                         <td class="cart-pic first-row">
-                          <img src="img/cart-page/product-1.jpg" />
+                          <img :src="keranjang.photo" />
                         </td>
                         <td class="cart-title first-row text-center">
-                          <h5>Pure Pineapple</h5>
+                          <h5>{{ keranjang.name }}</h5>
                         </td>
-                        <td class="p-price first-row">$60.00</td>
-                        <td class="delete-item">
-                          <a href="#"><i class="material-icons"> close </i></a>
+                        <td class="p-price first-row">
+                          ${{ keranjang.price }}
                         </td>
-                      </tr>
-                      <tr>
-                        <td class="cart-pic first-row">
-                          <img src="img/cart-page/product-1.jpg" />
-                        </td>
-                        <td class="cart-title first-row text-center">
-                          <h5>Pure Pineapple</h5>
-                        </td>
-                        <td class="p-price first-row">$60.00</td>
-                        <td class="delete-item">
+                        <td
+                          class="delete-item"
+                          @click="removeItem(keranjangUser.index)"
+                        >
                           <a href="#"><i class="material-icons"> close </i></a>
                         </td>
                       </tr>
@@ -117,10 +113,19 @@
                     <li class="subtotal">
                       ID Transaction <span>#SH12000</span>
                     </li>
-                    <li class="subtotal mt-3">Subtotal <span>$240.00</span></li>
-                    <li class="subtotal mt-3">Pajak <span>10%</span></li>
                     <li class="subtotal mt-3">
-                      Total Biaya <span>$440.00</span>
+                      Subtotal <span>${{ totalSubPrice }}.00</span>
+                    </li>
+                    <li class="subtotal mt-3">
+                      Pajak <span>10% : ${{ Discount }}.00</span>
+                    </li>
+                    <li class="subtotal mt-3">
+                      <b
+                        >Total Biaya
+                        <span
+                          ><b>${{ totalPrice }}.00</b></span
+                        ></b
+                      >
                     </li>
                     <li class="subtotal mt-3">
                       Bank Transfer <span>Mandiri</span>
@@ -158,6 +163,45 @@ export default {
     // HelloWorld
     Header,
     Footer,
+  },
+  data() {
+    return {
+      products: [],
+      keranjangUser: [],
+    };
+  },
+  // methods bis dijalankan jika akan ada event, misalnya onclick; onhover, dll
+  methods: {
+    removeItem(index) {
+      //hapus
+      this.keranjangUser.splice(index);
+      //save
+      const parsed = JSON.stringify(this.keranjangUser);
+      localStorage.setItem("keranjangUser", parsed);
+    },
+  },
+  mounted() {
+    if (localStorage.getItem("keranjangUser")) {
+      try {
+        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
+      } catch (e) {
+        localStorage.removeItem("keranjangUser");
+      }
+    }
+  },
+  // properti yg dapat dijalankan langsung tanpa membutuhkan event
+  computed: {
+    totalSubPrice() {
+      return this.keranjangUser.reduce(function (item, data) {
+        return item + data.price;
+      }, 0);
+    },
+    Discount() {
+      return this.totalSubPrice * (10 / 100);
+    },
+    totalPrice() {
+      return this.totalSubPrice + this.Discount;
+    },
   },
 };
 </script>
