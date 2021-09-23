@@ -87,12 +87,23 @@ export default {
       //save
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
+      //reload browser
+      window.location.reload();
     },
   },
   mounted() {
     axios
       .get("http://shayna-backend.belajarkoding.com/api/products")
       .then((response) => (this.products = response.data.data.data));
+
+    //mengecek storage
+    if (localStorage.getItem("keranjangUser")) {
+      try {
+        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
+      } catch (e) {
+        localStorage.removeItem("keranjangUser");
+      }
+    }
   },
 };
 </script>
